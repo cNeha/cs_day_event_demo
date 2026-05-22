@@ -1,6 +1,6 @@
 ---
 - name: Automated Failover Test
-  hosts: "{{ target_node }}"
+  hosts: db-group
   become: true
   gather_facts: false
 
