@@ -1,6 +1,6 @@
 ---
 - name: Validate Pacemaker Cluster
-  hosts: pacemaker_nodes
+  hosts: db-group
   become: true
   gather_facts: false
 
