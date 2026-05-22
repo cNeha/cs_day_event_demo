@@ -1,0 +1,13 @@
+---
+- name: Validate cluster nodes
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Display host details
+      debug:
+        msg:
+          - "Host={{ inventory_hostname }}"
+          - "IP={{ ansible_host }}"
+          - "OS={{ ansible_distribution }}"
+          - "Kernel={{ ansible_kernel }}"
