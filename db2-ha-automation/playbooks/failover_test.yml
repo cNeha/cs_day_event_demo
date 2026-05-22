@@ -1,6 +1,6 @@
 ---
 - name: Automated Failover Test
-  hosts: db-group
+  hosts: ec2-15-207-104-74.ap-south-1.compute.amazonaws.com
   become: true
   gather_facts: false
 
