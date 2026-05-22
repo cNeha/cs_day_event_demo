@@ -1,0 +1,35 @@
+---
+- name: Automated Failover Test
+  hosts: "{{ target_node }}"
+  become: true
+  gather_facts: false
+
+  vars:
+    failover_wait: 30
+
+  tasks:
+
+    - name: Put node into standby
+      command: pcs node standby {{ inventory_hostname }}
+
+    - name: Wait for failover
+      pause:
+        seconds: "{{ failover_wait }}"
+
+    - name: Check cluster status
+      command: pcs status
+      register: cluster_status
+      delegate_to: "{{ groups['pacemaker_nodes'][0] }}"
+      run_once: true
+
+    - name: Show cluster status
+      debug:
+        var: cluster_status.stdout_lines
+
+    - name: Verify resources migrated
+      fail:
+        msg: "Failover did not complete successfully"
+      when: "'Stopped' in cluster_status.stdout"
+
+    - name: Return node to cluster
+      command: pcs node unstandby {{ inventory_hostname }}

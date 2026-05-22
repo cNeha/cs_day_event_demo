@@ -1,0 +1,44 @@
+---
+- name: Validate Pacemaker Cluster
+  hosts: pacemaker_nodes
+  become: true
+  gather_facts: false
+
+  tasks:
+
+    - name: Check cluster status
+      command: pcs status
+      register: pcs_status
+      changed_when: false
+
+    - name: Display cluster status
+      debug:
+        var: pcs_status.stdout_lines
+
+    - name: Check quorum status
+      command: pcs quorum status
+      register: quorum_status
+      changed_when: false
+
+    - name: Display quorum status
+      debug:
+        var: quorum_status.stdout_lines
+
+    - name: Check fencing configuration
+      command: pcs stonith show
+      register: stonith_status
+      changed_when: false
+
+    - name: Display fencing configuration
+      debug:
+        var: stonith_status.stdout_lines
+
+    - name: Verify quorum is active
+      fail:
+        msg: "Quorum is not active"
+      when: "'Qdevice' not in quorum_status.stdout"
+
+    - name: Verify no failed resources
+      fail:
+        msg: "Cluster contains failed resources"
+      when: "'FAILED' in pcs_status.stdout"
