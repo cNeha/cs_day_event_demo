@@ -36,7 +36,7 @@
     - name: Verify quorum is active
       fail:
         msg: "Quorum is not active"
-      when: "'Qdevice' not in quorum_status.stdout"
+      when: "'Quorate' not in quorum_status.stdout"
 
     - name: Verify no failed resources
       fail:
