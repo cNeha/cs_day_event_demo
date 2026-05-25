@@ -1,0 +1,22 @@
+---
+- name: Return node to cluster
+  hosts: "{{ recover_node }}"
+  become: true
+  gather_facts: false
+
+  tasks:
+
+    - name: Remove standby state
+      command: pcs node unstandby {{ inventory_hostname }}
+
+    - name: Wait for cluster stabilization
+      pause:
+        seconds: 15
+
+    - name: Show cluster status
+      command: pcs status
+      register: cluster_status
+      changed_when: false
+
+    - debug:
+        var: cluster_status.stdout_lines
