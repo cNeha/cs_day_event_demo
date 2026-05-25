@@ -40,5 +40,6 @@
 
     - name: Verify no failed resources
       fail:
-        msg: "Cluster contains failed resources"
-      when: "'FAILED' in pcs_status.stdout"
+        msg: "Cluster contains failed resource
+      when: "'Failed Resource Actions:' in pcs_status.stdout"s"
+      
