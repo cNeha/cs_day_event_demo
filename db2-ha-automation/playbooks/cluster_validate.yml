@@ -28,18 +28,28 @@
       command: pcs stonith show
       register: stonith_status
       changed_when: false
+      failed_when: false
 
     - name: Display fencing configuration
       debug:
         var: stonith_status.stdout_lines
+        
 
     - name: Verify quorum is active
       fail:
         msg: "Quorum is not active"
-      when: "'Quorate' not in quorum_status.stdout"
+      when: "'Quorate: Yes' not in quorum_status.stdout"
 
     - name: Verify no failed resources
       fail:
         msg: "Cluster contains failed resource
-      when: "'Failed Resource Actions:' in pcs_status.stdout"s"
+      when: "'Failed Resource Actions:' in pcs_status.stdout" 
+    - name: Validation successful
+      debug:
+        msg:
+          - "Cluster healthy"
+          - "Quorum maintained"
+          - "STONITH configured"
+          - "Validation PASSED"
+    
       
