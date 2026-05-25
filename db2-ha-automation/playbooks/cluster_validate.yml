@@ -42,7 +42,7 @@
 
     - name: Verify no failed resources
       fail:
-        msg: "Cluster contains failed resource
+        msg: "Cluster contains failed resource"
       when: "'Failed Resource Actions:' in pcs_status.stdout" 
     - name: Validation successful
       debug:
