@@ -1,0 +1,51 @@
+---
+- name: Patch Passive Node
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+
+    - name: Display target
+      debug:
+        msg: "Passive node is {{ passive_node }}"
+
+    - name: Disable cluster startup
+      command: pcs cluster disable {{ passive_node }}
+      delegate_to: "{{ passive_node }}"
+      become: true
+
+    - name: Put node in standby
+      command: pcs node standby {{ passive_node }}
+      delegate_to: "{{ passive_node }}"
+      become: true
+
+    - name: Wait for resource relocation
+      pause:
+        seconds: 20
+
+    - name: Stop cluster services
+      command: pcs cluster stop
+      delegate_to: "{{ passive_node }}"
+      become: true
+
+    - name: Simulate patch installation
+      debug:
+        msg: "Applying patches on {{ passive_node }}"
+
+# Production:
+#
+# - name: Install updates
+#   dnf:
+#     name: '*'
+#     state: latest
+#   delegate_to: "{{ passive_node }}"
+
+    - name: Reboot node
+      reboot:
+      delegate_to: "{{ passive_node }}"
+      become: true
+
+    - name: Wait for node
+      wait_for_connection:
+        timeout: 600
+      delegate_to: "{{ passive_node }}"
