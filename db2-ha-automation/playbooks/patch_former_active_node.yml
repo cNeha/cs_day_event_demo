@@ -1,0 +1,10 @@
+---
+- name: Patch Former Active Node
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+
+    - name: Patch node
+      debug:
+        msg: "Patching {{ passive_node }}"
