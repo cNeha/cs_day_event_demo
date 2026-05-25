@@ -2,8 +2,9 @@
 - name: DB2 Cluster Monitoring
   hosts: localhost
   sources:
-    - ansible.eda.file:
-        path: /tmp/db2_events.json
+    - ansible.eda.webhook:
+        host: 0.0.0.0
+        port: 5000
   rules:
     - name: Validate cluster after failover
       condition: event.event_type == "failover"
