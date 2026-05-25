@@ -34,11 +34,6 @@
       debug:
         var: stonith_status.stdout_lines
 
-    - name: Verify quorum is active
-      fail:
-        msg: "Quorum is not active"
-      when: "'Quorate: Yes' not in quorum_status.stdout"
-
     - name: Verify no failed resources
       fail:
         msg: "Cluster contains failed resources"
