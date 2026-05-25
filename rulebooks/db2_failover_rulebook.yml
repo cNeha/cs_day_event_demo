@@ -1,6 +1,5 @@
 ---
 - name: DB2 Cluster Monitoring
-
   hosts: localhost
 
   sources:
@@ -10,9 +9,6 @@
 
   rules:
     - name: Failover Detected
-
       condition: event.event_type == "failover"
-
       action:
-        run_job_template:
-          name: Validate_DB2_Cluster
+        print_event:
