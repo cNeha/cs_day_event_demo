@@ -1,15 +1,12 @@
 ---
-- name: EDA Test
-
+- name: Test
   hosts: localhost
-
   sources:
-    - ansible.eda.tick:
-        delay: 10
-
+    - ansible.eda.webhook:
+        host: 0.0.0.0
+        port: 5000
   rules:
-    - name: Always fire
-      condition: true
-
+    - name: Test Rule
+      condition: event is defined
       action:
         print_event:
