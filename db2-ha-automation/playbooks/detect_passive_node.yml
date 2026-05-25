@@ -1,7 +1,8 @@
 ---
-- name: Detect passive node
+- name: Detect DB2 Active and Passive Nodes
   hosts: db-group
   gather_facts: false
+  become: true
 
   tasks:
 
@@ -9,17 +10,33 @@
       command: crm_mon -1
       register: crm_status
       changed_when: false
+      run_once: true
+
+    - name: Extract active node
+      set_fact:
+        active_node: "{{ crm_status.stdout | regex_search('Masters: \\[ (.*?) \\]', '\\1') | first }}"
+      run_once: true
 
     - name: Determine passive node
       set_fact:
         passive_node: >-
           {{
-            'db2'
-            if 'Masters: [ db1 ]' in crm_status.stdout
-            else 'db1'
+            groups['db-group']
+            | difference([active_node])
+            | first
           }}
+      run_once: true
 
-    - name: Export workflow variable
+    - name: Display cluster roles
+      debug:
+        msg:
+          - "Active Node : {{ active_node }}"
+          - "Passive Node: {{ passive_node }}"
+      run_once: true
+
+    - name: Export workflow variables
       set_stats:
         data:
+          active_node: "{{ active_node }}"
           passive_node: "{{ passive_node }}"
+      run_once: true
