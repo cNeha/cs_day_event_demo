@@ -31,12 +31,12 @@
     - name: Simulate patch installation
       debug:
         msg: "Applying patches on {{ passive_node }}"
-
-    - name: Install updates
-      dnf:
-        name: '*'
-        state: latest
-      delegate_to: "{{ passive_node }}"
+#For Production:
+   # - name: Install updates
+    #  dnf:
+     #   name: '*'
+      #  state: latest
+     # delegate_to: "{{ passive_node }}"
 
     - name: Reboot node
       reboot:
