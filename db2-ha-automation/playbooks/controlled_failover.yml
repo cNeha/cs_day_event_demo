@@ -1,0 +1,30 @@
+---
+- name: Controlled Failover
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+
+    - name: Put active node in standby
+      command: pcs node standby {{ active_node }}
+      delegate_to: "{{ active_node }}"
+      become: true
+
+    - name: Wait for failover
+      pause:
+        seconds: 20
+
+    - name: Show cluster status
+      command: pcs status
+      register: cluster_status
+      changed_when: false
+      delegate_to: "{{ passive_node }}"
+
+    - debug:
+        var: cluster_status.stdout_lines
+
+    - name: Export new active node
+      set_stats:
+        data:
+          active_node: "{{ passive_node }}"
+          passive_node: "{{ active_node }}"
