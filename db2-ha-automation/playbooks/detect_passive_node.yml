@@ -1,0 +1,25 @@
+---
+- name: Detect passive node
+  hosts: db-group
+  gather_facts: false
+
+  tasks:
+
+    - name: Get cluster status
+      command: crm_mon -1
+      register: crm_status
+      changed_when: false
+
+    - name: Determine passive node
+      set_fact:
+        passive_node: >-
+          {{
+            'db2'
+            if 'Masters: [ db1 ]' in crm_status.stdout
+            else 'db1'
+          }}
+
+    - name: Export workflow variable
+      set_stats:
+        data:
+          passive_node: "{{ passive_node }}"
