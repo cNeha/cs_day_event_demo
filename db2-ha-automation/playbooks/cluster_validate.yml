@@ -44,6 +44,33 @@
       fail:
         msg: "Cluster contains failed resource"
       when: "'Failed Resource Actions:' in pcs_status.stdout" 
+
+
+    - name: Verify cluster has quorum
+      assert:
+        that:
+          - "'partition with quorum' in pcs_status.stdout"
+        fail_msg: "Cluster quorum lost"
+        success_msg: "Cluster quorum maintained"
+
+    - name: Verify db1 is standby
+      assert:
+        that:
+          - "'Node db1: standby' in pcs_status.stdout"
+        fail_msg: "db1 is not in standby state"
+
+    - name: Verify DB2 promoted on db2
+      assert:
+        that:
+          - "'Masters: [ db2 ]' in pcs_status.stdout"
+      fail_msg: "DB2 resource not promoted on db2"
+
+    - name: Verify VIP moved to db2
+      assert:
+        that:
+          - "'DB2_IP' in pcs_status.stdout"
+          - "'Started db2' in pcs_status.stdout"
+        fail_msg: "VIP not active on db2"
     - name: Validation successful
       debug:
         msg:
