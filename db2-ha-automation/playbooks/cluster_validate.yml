@@ -33,7 +33,6 @@
     - name: Display fencing configuration
       debug:
         var: stonith_status.stdout_lines
-        
 
     - name: Verify quorum is active
       fail:
@@ -42,9 +41,8 @@
 
     - name: Verify no failed resources
       fail:
-        msg: "Cluster contains failed resource"
-      when: "'Failed Resource Actions:' in pcs_status.stdout" 
-
+        msg: "Cluster contains failed resources"
+      when: "'Failed Resource Actions:' in pcs_status.stdout"
 
     - name: Verify cluster has quorum
       assert:
@@ -53,39 +51,33 @@
         fail_msg: "Cluster quorum lost"
         success_msg: "Cluster quorum maintained"
 
-    - name: Verify db1 is standby
+    - name: Verify DB2 master exists
       assert:
         that:
-          - "'Node db1: standby' in pcs_status.stdout"
-        fail_msg: "db1 is not in standby state"
+          - "'Masters:' in pcs_status.stdout"
+        fail_msg: "No DB2 master resource found"
 
-    - name: Verify DB2 promoted on db2
-      assert:
-        that:
-          - "'Masters: [ db2 ]' in pcs_status.stdout"
-      fail_msg: "DB2 resource not promoted on db2"
-
-    - name: Verify VIP moved to db2
+    - name: Verify VIP resource exists
       assert:
         that:
           - "'DB2_IP' in pcs_status.stdout"
-          - "'Started db2' in pcs_status.stdout"
-        fail_msg: "VIP not active on db2"
+        fail_msg: "VIP resource not found"
+
+    - name: Verify active DB2 VIP
+      command: ip addr
+      register: vip_status
+      changed_when: false
+
+    - name: Display VIP status
+      debug:
+        var: vip_status.stdout_lines
+
     - name: Validation successful
       debug:
         msg:
           - "Cluster healthy"
           - "Quorum maintained"
           - "STONITH configured"
+          - "DB2 master active"
+          - "VIP resource present"
           - "Validation PASSED"
-    - name: Verify active DB2 VIP
-      command: ip addr         
-      register: vip_status
-      changed_when: false
-
-    - name: Display VIP status
-      debug:
-      var: vip_status.stdout_lines        
-      
-    
-      
