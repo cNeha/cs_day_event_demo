@@ -51,5 +51,14 @@
           - "Quorum maintained"
           - "STONITH configured"
           - "Validation PASSED"
+    - name: Verify active DB2 VIP
+      command: ip addr         
+      register: vip_status
+      changed_when: false
+
+    - name: Display VIP status
+      debug:
+      var: vip_status.stdout_lines        
+      
     
       
