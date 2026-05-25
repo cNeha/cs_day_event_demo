@@ -1,14 +1,14 @@
 ---
 - name: DB2 Cluster Monitoring
   hosts: localhost
-
   sources:
     - ansible.eda.webhook:
         host: 0.0.0.0
         port: 5000
-
   rules:
-    - name: Failover Detected
+    - name: Validate cluster after failover
       condition: event.event_type == "failover"
       action:
-        print_event:
+        run_job_template:
+          name: cluster_validate
+          organization: Default
