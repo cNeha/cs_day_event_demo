@@ -1,0 +1,21 @@
+---
+- name: Rejoin Passive Node
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+
+    - name: Start cluster
+      command: pcs cluster start
+      delegate_to: "{{ passive_node }}"
+      become: true
+
+    - name: Remove standby
+      command: pcs node unstandby {{ passive_node }}
+      delegate_to: "{{ passive_node }}"
+      become: true
+
+    - name: Enable cluster startup
+      command: pcs cluster enable {{ passive_node }}
+      delegate_to: "{{ passive_node }}"
+      become: true
