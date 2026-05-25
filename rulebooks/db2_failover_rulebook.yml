@@ -1,13 +1,13 @@
 ---
 - name: DB2 Cluster Monitoring
   hosts: localhost
-    sources:
-     - ansible.eda.tick:
-         delay: 30
-    rules:
-      - name: Validate cluster periodically
-        condition: event.i is defined
-        action:
-          run_job_template:
-            name: cluster_validate
-            organization: Default
+  sources:
+    - ansible.eda.tick:
+        delay: 30
+  rules:
+    - name: Validate cluster periodically
+      condition: event.i is defined
+      action:
+        run_job_template:
+          name: cluster_validate
+          organization: Default
