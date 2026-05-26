@@ -1,15 +1,13 @@
 ---
 - name: DB2 Cluster Monitoring
   hosts: all
-
   sources:
     - ansible.eda.webhook:
         host: 0.0.0.0
         port: 5000
   rules:
-    - name: Any Event
-      condition: event is defined
+    - name: Fire Always
+      condition: event.payload is not none
       action:
-        run_job_template:
-          name: cluster_validate
-          organization: Default
+        debug:
+          msg: "EVENT RECEIVED"
