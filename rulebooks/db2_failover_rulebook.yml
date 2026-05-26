@@ -1,33 +1,13 @@
 ---
-- name: DB2 Failure Detection
-  hosts: localhost
+- name: DB2 Cluster Monitoring
+  hosts: all
   sources:
     - ansible.eda.webhook:
         host: 0.0.0.0
         port: 5000
   rules:
-    - name: Run validation when failure detected
-      condition: event.status == "failed"
+    - name: Display Event
+      condition: event.payload is defined
       action:
-        run_job_template:
-          name: cluster_validate
-          organization: Default
-          
-    - name: Validate cluster
-      condition: event.payload.alert == "cluster_validation"
-      action:
-      run_job_template:
-        name: Validate Cluster
-
-    - name: Execute failover
-      condition: event.payload.alert == "failover_required"
-      action:
-        run_job_template:
-          name: Failover Cluster
-
-    - name: Put node standby
-      condition: event.payload.alert == "node_standby"
-      action:
-        run_job_template:
-          name: Put Node Standby
-
+        debug:
+          msg: "{{ event.payload }}"
