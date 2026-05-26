@@ -1,19 +1,15 @@
 ---
 - name: DB2 Cluster Monitoring
-
-  hosts: all
-
+  hosts: db1
   sources:
     - ansible.eda.webhook:
         host: 0.0.0.0
         port: 5000
-
   rules:
-
-    - name: Test Rule
-
-      condition: event.payload.test == "hello"
-
+    - name: High CPU Event
+      condition:
+        event.payload.pcp.pmie.rule == "High average processor utilization"
       action:
-        debug:
-          msg: "Webhook matched"
+        run_job_template:
+          name: cluster_validate
+          organization: Default
