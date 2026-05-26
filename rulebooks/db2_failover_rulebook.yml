@@ -12,3 +12,22 @@
         run_job_template:
           name: cluster_validate
           organization: Default
+          
+    - name: Validate cluster
+      condition: event.payload.alert == "cluster_validation"
+      action:
+      run_job_template:
+        name: Validate Cluster
+
+    - name: Execute failover
+      condition: event.payload.alert == "failover_required"
+      action:
+        run_job_template:
+          name: Failover Cluster
+
+    - name: Put node standby
+      condition: event.payload.alert == "node_standby"
+      action:
+        run_job_template:
+          name: Put Node Standby
+
